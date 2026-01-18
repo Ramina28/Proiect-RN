@@ -55,12 +55,9 @@ project-name/
 
 | **Caracteristică** | **Tip** | **Unitate** | **Descriere** | **Domeniu valori** |
 |-------------------|---------|-------------|---------------|--------------------|
-| Canal R        | numeric | intensitate pixel | Componenta roșie pentru fiecare pixel | 0–255 |
-| Canal G        | numeric | intensitate pixel | Componenta verde | 0–255 |
-| Canal B        | numeric | intensitate pixel | Componenta albastră | 0–255 |
-| Width          | numeric | px | Lățime imagine, standardizată prin resize | 200 |
-| Height         | numeric | px | Înălțime variabilă proporțional | ~200–400 |
-| Label (clasă)  | categorial | - | Categoria dermatologică asociată imaginii | {acnee, eczemă, roșeață} |
+| Canal RGB  | numeric | intensitate pixel | intensitatea pe cele 3 canale de culoare | 0–255 (raw), 0–1 (după normalizare) |
+| Dimensiune imagine | numeric | px | Rezoluția imaginii (standardizată) | 200 x 200 px (fix) |
+| Label (clasă) | categorial | – | eticheta imaginii | {0: Acnee, 1: Eczemă, 2: Roșeață} |
 
 **Fișier recomandat:**  `data/README.md`
 
@@ -161,7 +158,7 @@ Roșeață = 25 imagini (semnificativ mai puține)
 - [x] Structură repository configurată
 - [x] Dataset analizat (EDA realizată)
 - [x] Date preprocesate
-- [ ] Seturi train/val/test generate
+- [x] Seturi train/val/test generate
 - [x] Documentație actualizată în README + `data/README.md`
 
 ---
