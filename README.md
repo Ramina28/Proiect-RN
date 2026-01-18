@@ -123,7 +123,6 @@ Roșeață = 25 imagini (semnificativ mai puține)
 ### 4.2 Transformarea caracteristicilor
 
 * **Normalizare:** implicită prin transformare RGB 0–255 → transmisibil ulterior ca 0–1 pentru model
-* **Encoding pentru variabile categoriale**
 * **Ajustarea dezechilibrului de clasă** 
 → clasa roșeață având mai puține imagini, datasetul a fost extins prin 2 augmentări per imagine
 
