@@ -3,7 +3,7 @@
 **Disciplina:** Rețele Neuronale  
 **Instituție:** POLITEHNICA București – FIIR  
 **Student:** Gaitan Ramina Alessandra  
-**Link Repository GitHub**
+**Link Repository GitHub** https://github.com/Ramina28/Proiect-RN.git
 **Data:** 4.12.2025  
 ---
 
@@ -36,88 +36,58 @@ Această etapă corespunde punctului **5. Dezvoltarea arhitecturii aplicației s
 
 ### 1. Tabelul Nevoie Reală → Soluție SIA → Modul Software  
 
-| **Nevoie reală concretă** | **Cum o rezolvă SIA-ul cu indicatori măsurabili** | **Modul software responsabil** |
-|---------------------------|--------------------------------------------------|--------------------------------|
-| Diagnostic vizual rapid al problemelor ușoare ale pielii | Modelul clasifică o imagine încărcată în **< 3 secunde** în una din clase: acnee / eczemă / roșeață | Modul RN (CNN) + UI aplicație |
-| Reducerea riscului de autodiagnosticare greșită | Sistemul returnează **probabilitate pe clasă (%)**, permițând interpretare controlată | Inference model + UI afișare rezultate |
-| Scalare în viitor pentru detectarea severității leziunilor | Arhitectura modulară permite re-antrenare cu **dataset extins cu +50–200 imagini noi** fără rescriere UI | Structură RN scalabilă + Data pipeline |
-| Creșterea robusteții la variații de lumină, cameră, ton de piele | Pentru fiecare imagine RAW se generează **2 augmentări realiste**, crescând variabilitatea datasetului cu **+200%** |  Modul de Preprocesare + Augmentare (`resize_images.py` + `augment_images.py`)  |
-| Asigurarea funcționării end-to-end fără intervenție manuală | Pipeline complet automat: Upload → Resize → Inferență → Afișare rezultat în UI cu latență sub **3 secunde** | Preprocessing + Neural Network + UI integrat |
+| **Nevoie reală concretă** | **Cum o rezolvă SIA-ul vostru** | **Modul software responsabil** |
+|---------------------------|--------------------------------|--------------------------------|
+| Identificarea rapidă a tipului de afecțiune cutanată (acnee vs eczeme) dintr-o imagine | Modelul clasifică imaginea încărcată și returnează rezultatul în **< 3 secunde** (pe PC local) | Preprocessing + RN Inference + UI |
+| Reducerea autodiagnosticării greșite prin rezultat “alb/negru” | Sistemul returnează **probabilități pe clase (%)** și eticheta finală (ex: acnee 82%, eczeme 18%) | RN Inference + UI Results |
+| Asigurarea funcționării end-to-end fără intervenție manuală | Flux complet: **Upload → Preprocess (200×200) → Inferență → Afișare rezultat**, fără pași manuali | Preprocessing + RN + UI |
+| Posibilitatea extinderii viitoare (ex: încă 1 clasă sau severitate) | Arhitectură modulară: adăugarea unei clase și reantrenare pe dataset extins cu modificări minime în cod/UI | Data Pipeline + RN Architecture |
 
 
 ### 2. Contribuția Voastră Originală la Setul de Date – MINIM 40% din Totalul Observațiilor Finale
 
-#### Tipuri de contribuții acceptate (exemple din inginerie):
-
-Alegeți UNA sau MAI MULTE dintre variantele de mai jos și **demonstrați clar în repository**:
-
-| **Tip contribuție** | **Exemple concrete din proiectul meu** | **Dovada minimă cerută (furnizată în repository)** |
-|---------------------|-----------------------------------------|---------------------------------------------------|
-| Tip contribuție | Exemple concrete din proiectul meu | Dovada minimă cerută (furnizată în repository) |
-|---------------------|----------------------------------------------|---------------------------------------------------|
-| **Etichetare / adnotare manuală**  | Am colectat imagini dermatologice dintr-o bază de date publică și le-am organizat manual în 3 clase: **acnee, eczemă, roșeață**. Am eliminat imagini irelevante (blur, rezoluție slabă, duplicate) și am validat vizual fiecare eșantion. Preprocesarea realizată: resize standard 200px + conversie format RGB. | Structura vizibilă în `data/raw/` și `data/processed/` <br> Script de procesare: `src/preprocessing/resize_images.py` |
-| **Date sintetice / augmentare originală**  | Pentru fiecare imagine procesată au fost generate **2 augmentări realiste** (luminozitate, contrast, ton culoare, blur fin, zgomot gaussian), crescând datasetul cu **+200%**. | Output vizibil în `data/generated/` <br> Script augmentare: `src/preprocessing/augment_images.py` |
-
-
-
-#### Declarație obligatorie în README:
-
-Scrieți clar în acest README (Secțiunea 2):
-
-```markdown
-### Contribuția originală la setul de date:
-
-**Total observații finale:** 423 (după Etapa 3 + Etapa 4)
-**Observații originale:** 141 (33.3%) 
-**Observații augmentate realist:** 282 → contribuție totală 66.6% 
+**Total observații finale:** 8320  
+**Observații originale:** 8320 (100%)
 
 **Tipul contribuției:**
 [ ] Date generate prin simulare fizică  
 [ ] Date achiziționate cu senzori proprii  
 [X] Etichetare/adnotare manuală  
-[X] Date generate prin augmentare realistă  
 [ ] Date sintetice prin metode avansate  
 
 **Descriere detaliată:**
 
-Setul de date utilizat în proiect a fost construit pornind de la 141 imagini dermatologice colectate manual dintr-o bază de date publică. Imaginile au fost inspectate vizual și repartizate în trei clase distincte – **acnee, eczemă și roșeață** – eliminându-se eșantioanele neclare, supraexpuse, incomplete sau nerelevante. Această etapă de selecție manuală asigură faptul că datasetul final conține doar exemple reprezentative pentru cele trei afecțiuni analizate, reprezentând astfel o contribuție directă la calitatea și relevanța datelor utilizate ulterior în modelul RN.
+Setul de date utilizat în proiect este alcătuit din 8320 imagini dermatologice colectate manual din surse publice. Fiecare imagine a fost inspectată vizual și etichetată manual într-una din cele două clase: **acnee** sau **eczeme**. În procesul de selecție au fost eliminate imaginile neclare, duplicatele, colajele și cazurile ambigue, asigurând astfel un dataset curat și corect etichetat.
 
-În etapa de preprocesare, imaginile brute au fost standardizate prin redimensionare la **lățime fixă de 200px** (menținând proporțiile originale) și convertite în format RGB, fiind salvate în `data/processed/`. Scopul acestei uniformizări este asigurarea compatibilității cu rețeaua neuronală și reducerea variațiilor nedorite între imagini, provenite din rezoluții sau camere diferite.
+Această activitate de selecție și adnotare manuală reprezintă o contribuție originală substanțială, întrucât datele brute din surse publice nu sunt structurate inițial pentru această problemă de clasificare binară. Datasetul final este rezultatul unui proces propriu de curățare, organizare și validare vizuală, adaptat special scopului acestui proiect.
 
-Pentru extinderea datasetului și îmbunătățirea capacității de generalizare a modelului, fiecare eșantion procesat a fost supus unui proces de augmentare realistă. Am generat **două variante noi pentru fiecare imagine**, aplicând transformări controlate precum ajustarea luminozității, contrastului și saturației, adăugarea de *Gaussian noise* cu intensitate redusă și aplicarea unui blur subtil. Aceste transformări simulează condiții reale de fotografiere (diferențe de iluminare, cameră, ton de piele), crescând diversitatea vizuală a setului de date.
+Preprocesarea s-a realizat prin scriptul `resize_images.py`, care convertește imaginile în format RGB și le redimensionează la o lățime si inaltime standard de 200px, menținând proporțiile. Datele standardizate sunt salvate în `data/processed/`.
 
-În final, datasetul a crescut de la 141 la **423 imagini totale**, dintre care 282 reprezintă contribuție originală generată prin augmentare (~66.6%), peste cerința minimă de 40%.  
-Pipeline-ul a fost implementat prin două scripturi dedicate:
-- `src/preprocessing/resize_images.py` – preprocesare și standardizare
-- `src/preprocessing/augment_images.py` – generare augmentări + extindere dataset
+**Locația codului:**  
+`src/preprocessing/resize_images.py`
 
 **Locația datelor:**  
-`data/raw/` – imagini brute  
-`data/processed/` – set standardizat (141 imagini)  
-`data/generated/` – augmentări originale (282 imagini)
+`data/raw/` – imagini brute colectate și etichetate manual  
+`data/processed/` – imagini standardizate
 
-  
+**Notă:** Augmentările aplicate pe setul de antrenare (train) sunt folosite pentru creșterea robusteții modelului, dar nu sunt contabilizate ca “contribuție originală” (conform cerințelor proiectului).
 
-**Locația codului:** `src/preprocessing/resize_images.py` – resize și standardizare imagini  
-`src/preprocessing/augment_images.py` – generare augmentări + creștere dataset  
- 
-**Locația datelor:** `data/raw/` → imagini brute  
-`data/processed/` → 141 imagini standardizate  
-`data/generated/` → 282 imagini augmentate (contribuție proprie)
+**Dovezi:**
+- Structura folderelor `data/raw/acnee` și `data/raw/eczeme`  
+- Număr mare de fișiere per clasă (peste 4000 imagini / clasă)
 
 
 **Dovezi:**
 - Grafic comparativ: `docs/generated_vs_real.png`
 - Setup experimental: `docs/acquisition_setup.jpg` (dacă aplicabil)
 - Tabel statistici: `docs/data_statistics.csv`
-```
+
+---
 
 #### Exemple pentru "contribuție originală":
 -Simulări fizice realiste cu ecuații și parametri justificați  
 -Date reale achiziționate cu senzori proprii (setup documentat)  
 -Augmentări avansate cu justificare fizică (ex: simulare perspective camera industrială)  
-
-
 
 ---
 
@@ -133,10 +103,10 @@ State Machine-ul a fost definit astfel încât să urmeze exact pașii prin care
 Am introdus explicit starea de **VALIDATE_IMAGE** și ramura **ERROR_INVALID_INPUT** deoarece, în cazul imaginilor dermatologice, calitatea și relevanța pozei sunt critice (blur, cadru greșit, format nepotrivit). Acest lucru permite sistemului să gestioneze elegant situațiile în care inputul nu este adecvat, fără a bloca aplicația sau a produce rezultate înșelătoare. Structura este modulară: dacă în viitor adăugăm și alte clase sau un modul de „severitate leziune”, acestea se vor integra natural după starea de PREPROCESS sau INFERENCE_RN, fără a schimba logica principală a State Machine-ului.
 
 
-      IDLE → ACQUIRE_IMAGE (user upload) → VALIDATE_IMAGE (format, blur, dimensiune) → 
-  ├─ [Valid] → PREPROCESS (resize 200px, RGB) → INFERENCE_RN (CNN acnee/eczema/roșeață) → DISPLAY_RESULT (clasă + probabilități) → IDLE
+    IDLE → ACQUIRE_IMAGE (user upload) → VALIDATE_IMAGE (format, dimensiune, integritate) →
+  ├─ [Valid] → PREPROCESS (RGB + resize 200×200 cu padding + normalizare) → INFERENCE_RN (CNN acnee/eczeme) → DISPLAY_RESULT (clasă + probabilități) → IDLE
   └─ [Invalid] → ERROR_INVALID_INPUT (mesaj în UI) → IDLE
-          
+
 
 
 **Legendă obligatorie (scrieți în README):**
@@ -149,7 +119,7 @@ Stările principale sunt:
 1. **IDLE**: aplicația este deschisă, dar nu prelucrează nimic; UI așteaptă ca utilizatorul să încarce o imagine cu zona de piele afectată.  
 2. **ACQUIRE_IMAGE**: utilizatorul selectează sau face upload unei imagini din galerie/cameră; fișierul este preluat de aplicație și trimis spre verificare.  
 3. **VALIDATE_IMAGE**: se verifică dacă fișierul este o imagine validă (format acceptat, dimensiune minimă, nu este complet neagră / albă, nu este goală); dacă nu trece validarea, se intră în starea de eroare.  
-4. **PREPROCESS**: imaginea este preprocesată (resize la 200px lățime cu păstrarea proporțiilor, conversie în RGB, normalizare), astfel încât să fie compatibilă cu input-ul rețelei neuronale convoluționale.  
+4. **PREPROCESS**: imaginea este preprocesată (resize la 200x200px , conversie în RGB, normalizare), astfel încât să fie compatibilă cu input-ul rețelei neuronale convoluționale.  
 5. **INFERENCE_RN**: imaginea preprocesată este trimisă către modelul CNN, care calculează scoruri de probabilitate pentru fiecare clasă: acnee / eczemă / roșeață.  
 6. **DISPLAY_RESULT**: UI afișează utilizatorului rezultatul clasificării (clasa cu probabilitatea maximă + eventual probabilitățile pe fiecare categorie) și oferă opțiunea de a încărca o nouă imagine sau de a închide aplicația.  
 7. **ERROR_INVALID_INPUT**: dacă imaginea este coruptă, prea mică, blurată sau nu are format suportat, sistemul afișează un mesaj de eroare și revine în starea IDLE, permițând utilizatorului să încerce din nou.
@@ -202,8 +172,8 @@ Toate cele 3 module trebuie să **pornească și să ruleze fără erori** la pr
 #### **Modul 3: Web Service / UI**
 
 **Funcționalități MINIME obligatorii:**
-- [ ] Propunere Interfață ce primește input de la user (formular, file upload, sau API endpoint)
-- [ ] Includeți un screenshot demonstrativ în `docs/screenshots/`
+- [x] Propunere Interfață ce primește input de la user (formular, file upload, sau API endpoint)
+- [x] Includeți un screenshot demonstrativ în `docs/screenshots/`
 
 **Ce NU e necesar în Etapa 4:**
 - UI frumos/profesionist cu grafică avansată
@@ -260,7 +230,7 @@ proiect-rn-[nume-prenume]/
 - [x] Tabelul Nevoie → Soluție → Modul complet (minimum 2 rânduri cu exemple concrete completate in README_Etapa4_Arhitectura_SIA.md)
 - [x] Declarație contribuție 40% date originale completată în README_Etapa4_Arhitectura_SIA.md
 - [x] Cod generare/achiziție date funcțional și documentat
-- [ ] Dovezi contribuție originală: grafice + log + statistici în `docs/`
+- [x] Dovezi contribuție originală: grafice + log + statistici în `docs/`
 - [x] Diagrama State Machine creată și salvată în `docs/state_machine.*`
 - [x] Legendă State Machine scrisă în README_Etapa4_Arhitectura_SIA.md (minimum 1-2 paragrafe cu justificare)
 - [x] Repository structurat conform modelului de mai sus (verificat consistență cu Etapa 3)
@@ -271,7 +241,6 @@ proiect-rn-[nume-prenume]/
 - [x] CSV generat în format compatibil cu preprocesarea din Etapa 3
 - [x] Documentație în `src/data_acquisition/README.md` cu:
   - [x] Metodă de generare/achiziție explicată
-  - [x] Parametri folosiți (frecvență, durată, zgomot, etc.)
   - [x] Justificare relevanță date pentru problema voastră
 - [x] Fișiere în `data/generated/` conform structurii
 
@@ -280,9 +249,9 @@ proiect-rn-[nume-prenume]/
 - [x] README în `src/neural_network/` cu detalii arhitectură curentă
 
 ### Modul 3: Web Service / UI
-- [ ] Propunere Interfață ce pornește fără erori (comanda de lansare testată)
-- [ ] Screenshot demonstrativ în `docs/screenshots/ui_demo.png`
-- [ ] README în `src/app/` cu instrucțiuni lansare (comenzi exacte)
+- [x] Propunere Interfață ce pornește fără erori (comanda de lansare testată)
+- [x] Screenshot demonstrativ în `docs/screenshots/ui_demo.png`
+- [x] README în `src/app/` cu instrucțiuni lansare (comenzi exacte)
 
 ---
 
