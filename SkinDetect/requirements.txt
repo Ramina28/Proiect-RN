@@ -1,1 +1,8 @@
-hallo world!
+tensorflow>=2.10
+gradio>=4.0
+numpy
+pillow
+scikit-learn
+matplotlib
+pandas
+seaborn

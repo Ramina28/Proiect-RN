@@ -1,118 +1,122 @@
-#!/usr/bin/env python3
 """
-Modul 2 – Neural Network pentru SIA Dermatologică
+Modul 2: Neural Network Module (Etapa 4) – SkinDetect (Acnee vs Eczeme)
 
-În Etapa 4:
-- definim un model CNN simplu pentru clasificarea în 3 clase (acnee, eczemă, roșeață)
-- îl compilăm fără erori
-- demonstrăm că poate fi salvat și reîncărcat
+Scop (Etapa 4):
+- definirea unei arhitecturi CNN pentru clasificare imagini dermatologice
+- compilarea modelului (fără antrenare serioasă)
+- posibilitatea de a salva și reîncărca modelul (schelet funcțional end-to-end)
 
-NU este necesar să fie antrenat cu acuratețe bună în acest stadiu.
+De ce această arhitectură:
+- Problema este de clasificare imagini (2 clase), iar CNN-urile sunt potrivite deoarece învață filtre spațiale
+  relevante (textură, contururi, pattern-uri) direct din pixeli.
+- Arhitectura este moderat de mică (3 blocuri Conv) pentru a rula rapid și a fi ușor de integrat în pipeline/UI.
+- Input fix: 200x200x3 (compatibil cu preprocesarea din `resize_images.py`).
+
+IMPORTANT:
+- În Etapa 4, modelul poate rămâne neantrenat (weights random). Se verifică doar că pipeline-ul rulează.
 """
 
-from pathlib import Path
+from __future__ import annotations
 
-print("=======================================")
-print("  Modul 2 – Neural Network – SkinCNN  ")
-print("=======================================\n")
-
-print("[STEP] Import TensorFlow/Keras...")
-
-try:
-    import tensorflow as tf
-    from tensorflow.keras import layers, models
-except Exception as e:
-    print("[ERROR] Nu am putut importa TensorFlow/Keras.")
-    print("Mesaj de eroare:")
-    print(e)
-    print("\nSoluție probabilă: instalează TensorFlow cu:")
-    print("    pip install tensorflow")
-    raise SystemExit(1)
-
-print("[OK] TensorFlow a fost importat cu succes.\n")
-
-# Parametri de bază
-IMG_HEIGHT = 200
-IMG_WIDTH = 200
-NUM_CHANNELS = 3
-NUM_CLASSES = 3
+import os
+from dataclasses import dataclass
+import tensorflow as tf
 
 
-def build_skin_cnn(
-    input_shape=(IMG_HEIGHT, IMG_WIDTH, NUM_CHANNELS),
-    num_classes=NUM_CLASSES,
-) -> tf.keras.Model:
+@dataclass(frozen=True)
+class ModelConfig:
+    img_height: int = 200
+    img_width: int = 200
+    channels: int = 3
+    num_classes: int = 2
+    learning_rate: float = 1e-3
+
+
+def build_cnn(config: ModelConfig) -> tf.keras.Model:
     """
-    Construcția modelului CNN pentru clasificarea imaginilor de piele.
+    Construiește o rețea CNN simplă pentru clasificare binară (2 clase).
 
-    Justificare rapidă:
-    - straturi Conv2D + MaxPooling -> extragere caracteristici vizuale (texturi, margini, zone inflamate)
-    - creșterea numărului de filtre (32 → 64 → 128) -> capturarea unor caracteristici din ce în ce mai complexe
-    - GlobalAveragePooling2D -> reduce numărul de parametri, util pentru dataset relativ mic
-    - Dense(64) + Dense(num_classes, softmax) -> clasificare finală pe cele 3 clase
+    Input: (200, 200, 3)
+    Output: probabilități pe clase (softmax, 2 neuroni)
     """
-
-    inputs = layers.Input(shape=input_shape, name="input_image")
-
-    # Normalizare [0, 1]
-    x = layers.Rescaling(1.0 / 255.0, name="rescale_0_1")(inputs)
+    inputs = tf.keras.Input(shape=(config.img_height, config.img_width, config.channels), name="image")
 
     # Bloc 1
-    x = layers.Conv2D(32, (3, 3), activation="relu", padding="same", name="conv_1")(x)
-    x = layers.MaxPooling2D(pool_size=(2, 2), name="pool_1")(x)
+    x = tf.keras.layers.Conv2D(32, (3, 3), padding="same", activation="relu")(inputs)
+    x = tf.keras.layers.MaxPooling2D((2, 2))(x)
 
     # Bloc 2
-    x = layers.Conv2D(64, (3, 3), activation="relu", padding="same", name="conv_2")(x)
-    x = layers.MaxPooling2D(pool_size=(2, 2), name="pool_2")(x)
+    x = tf.keras.layers.Conv2D(64, (3, 3), padding="same", activation="relu")(x)
+    x = tf.keras.layers.MaxPooling2D((2, 2))(x)
 
     # Bloc 3
-    x = layers.Conv2D(128, (3, 3), activation="relu", padding="same", name="conv_3")(x)
-    x = layers.MaxPooling2D(pool_size=(2, 2), name="pool_3")(x)
+    x = tf.keras.layers.Conv2D(128, (3, 3), padding="same", activation="relu")(x)
+    x = tf.keras.layers.MaxPooling2D((2, 2))(x)
 
-    # Clasificare
-    x = layers.GlobalAveragePooling2D(name="gap")(x)
-    x = layers.Dense(64, activation="relu", name="dense_1")(x)
-    outputs = layers.Dense(num_classes, activation="softmax", name="predictions")(x)
+    # Head
+    x = tf.keras.layers.Flatten()(x)
+    x = tf.keras.layers.Dense(128, activation="relu")(x)
+    x = tf.keras.layers.Dropout(0.3)(x)
 
-    model = models.Model(inputs=inputs, outputs=outputs, name="skin_cnn_classifier")
+    outputs = tf.keras.layers.Dense(config.num_classes, activation="softmax", name="probs")(x)
 
-    # Compilare – cerință Etapa 4
-    model.compile(
-        optimizer="adam",
-        loss="categorical_crossentropy",
-        metrics=["accuracy"],
-    )
-
+    model = tf.keras.Model(inputs=inputs, outputs=outputs, name="SkinDetect_CNN")
     return model
 
 
-def save_model(model: tf.keras.Model, path: str = "models/skin_cnn_untrained.keras") -> None:
-    model_dir = Path(path).parent
-    model_dir.mkdir(parents=True, exist_ok=True)
+def compile_model(model: tf.keras.Model, config: ModelConfig) -> tf.keras.Model:
+    """
+    Compilează modelul pentru clasificare multi-class (2 clase).
+    """
+    model.compile(
+        optimizer=tf.keras.optimizers.Adam(learning_rate=config.learning_rate),
+        loss=tf.keras.losses.CategoricalCrossentropy(),
+        metrics=["accuracy"],
+    )
+    return model
 
-    print(f"[STEP] Salvez modelul în: {path}")
-    model.save(path)
-    print("[OK] Model salvat cu succes.\n")
+
+def save_model(model: tf.keras.Model, out_path: str) -> None:
+    """
+    Salvează modelul pe disc (format .keras recomandat).
+    """
+    os.makedirs(os.path.dirname(out_path), exist_ok=True)
+    model.save(out_path)
 
 
-def load_model(path: str = "models/skin_cnn_untrained.keras") -> tf.keras.Model:
-    print(f"[STEP] Încarc modelul din: {path}")
-    loaded_model = tf.keras.models.load_model(path)
-    print("[OK] Model încărcat cu succes.\n")
-    return loaded_model
+def load_model(model_path: str) -> tf.keras.Model:
+    """
+    Reîncarcă modelul salvat.
+    """
+    return tf.keras.models.load_model(model_path)
+
+
+def main():
+    """
+    Rulează o demonstrație minimă:
+    - construiește modelul
+    - îl compilează
+    - îl salvează
+    - îl reîncarcă
+    - printează summary (dovadă că modulul funcționează)
+    """
+    config = ModelConfig()
+    model = build_cnn(config)
+    model = compile_model(model, config)
+
+    print("\n--- MODEL SUMMARY (compiled) ---")
+    model.summary()
+
+    model_path = os.path.join("models", "untrained_model.keras")
+    save_model(model, model_path)
+    print(f"\n[OK] Model salvat: {model_path}")
+
+    reloaded = load_model(model_path)
+    print(f"[OK] Model reîncărcat: {model_path}")
+
+    print("\n--- RELOADED MODEL SUMMARY ---")
+    reloaded.summary()
 
 
 if __name__ == "__main__":
-    print("[STEP] Construiesc modelul...")
-    model = build_skin_cnn()
-
-    print("\n[STEP] Afișez summary-ul modelului:")
-    model.summary()
-
-    print("\n[STEP] Salvez modelul neantrenat...")
-    save_model(model, path="models/skin_cnn_untrained.keras")
-
-    print("[STEP] Reîncarc modelul pentru verificare...")
-    _ = load_model(path="models/skin_cnn_untrained.keras")
-
-    print("\n[INFO] Modul 2 (Neural Network) a rulat COMPLET fără erori.")
+    main()

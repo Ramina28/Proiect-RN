@@ -2,8 +2,8 @@
 
 **Disciplina:** Rețele Neuronale  
 **Instituție:** POLITEHNICA București – FIIR  
-**Student:** [Nume Prenume]  
-**Data:** [Data]  
+**Student:** Găitan Ramina Alessandra 
+**Data:** 26.11.2025  
 
 ---
 
@@ -40,25 +40,27 @@ project-name/
 
 ### 2.1 Sursa datelor
 
-* **Origine:** [Descriere sursă date - ex: senzori robot, dataset public, simulare]
-* **Modul de achiziție:** ☐ Senzori reali / ☐ Simulare / ☐ Fișier extern / ☐ Generare programatică
-* **Perioada / condițiile colectării:** [Ex: Noiembrie 2024 - Ianuarie 2025, condiții experimentale specifice]
+* **Origine:** imagini dermatologice preluate dintr-o bază de date publică online
+* **Modul de achiziție:** ☑ Fișier extern - Imaginile au fost descărcate individual și filtrate vizual înainte de includerea în dataset.
+* **Perioada / condițiile colectării:**  Noiembrie–Decembrie 2025  ,  Colectarea s-a realizat manual prin selecție vizuală, urmărindu-se claritatea leziunii, focalizarea corectă și relevanța dermatologică.
 
 ### 2.2 Caracteristicile dataset-ului
 
-* **Număr total de observații:** [Ex: 15,000]
-* **Număr de caracteristici (features):** [Ex: 12]
-* **Tipuri de date:** ☐ Numerice / ☐ Categoriale / ☐ Temporale / ☐ Imagini
-* **Format fișiere:** ☐ CSV / ☐ TXT / ☐ JSON / ☐ PNG / ☐ Altele: [...]
+* **Număr total de observații:** 423 (141 originale + 282 augmentate)
+* **Număr de caracteristici (features):** 3
+* **Tipuri de date:** ☑ Imagini
+* **Format fișiere:** ☑ PNG   ☑ JPG / JPEG
 
 ### 2.3 Descrierea fiecărei caracteristici
 
 | **Caracteristică** | **Tip** | **Unitate** | **Descriere** | **Domeniu valori** |
 |-------------------|---------|-------------|---------------|--------------------|
-| feature_1 | numeric | mm | [...] | 0–150 |
-| feature_2 | categorial | – | [...] | {A, B, C} |
-| feature_3 | numeric | m/s | [...] | 0–2.5 |
-| ... | ... | ... | ... | ... |
+| Canal R        | numeric | intensitate pixel | Componenta roșie pentru fiecare pixel | 0–255 |
+| Canal G        | numeric | intensitate pixel | Componenta verde | 0–255 |
+| Canal B        | numeric | intensitate pixel | Componenta albastră | 0–255 |
+| Width          | numeric | px | Lățime imagine, standardizată prin resize | 200 |
+| Height         | numeric | px | Înălțime variabilă proporțional | ~200–400 |
+| Label (clasă)  | categorial | - | Categoria dermatologică asociată imaginii | {acnee, eczemă, roșeață} |
 
 **Fișier recomandat:**  `data/README.md`
 
@@ -68,40 +70,62 @@ project-name/
 
 ### 3.1 Statistici descriptive aplicate
 
-* **Medie, mediană, deviație standard**
+În cazul dataset-ului bazat pe imagini dermatologice, analiza statistică se referă la dimensiuni și distribuții vizuale:
+
+* **Medie, mediană, deviație standard** pentru intensitatea pixelilor pe canale RGB
+→ nu au fost identificate deviații extreme sau modificări nenaturale ale culorii.
 * **Min–max și quartile**
+→ valorile pixelilor se află constant în intervalul 0–255 (normal pentru imagini RGB).
 * **Distribuții pe caracteristici** (histograme)
+→ histogramă RGB arată variații de iluminare între imagini (motivul pentru care augmentarea era necesară).
 * **Identificarea outlierilor** (IQR / percentile)
+→ au fost detectate câteva imagini neclare sau irelevante, eliminate înainte de preprocesare.
 
 ### 3.2 Analiza calității datelor
 
-* **Detectarea valorilor lipsă** (% pe coloană)
+* **Detectarea valorilor lipsă** 
+→ nu există imagini corupte sau incomplete (0% valori lipsă).
 * **Detectarea valorilor inconsistente sau eronate**
+→ unele imagini au iluminare foarte diferită; rezolvat prin augmentare (luminozitate, contrast, color shift)
 * **Identificarea caracteristicilor redundante sau puternic corelate**
+→ nu se aplică ca indicator numeric, însă imaginile din aceeași clasă pot fi vizual similare → augmentarea mărește diversitatea.
 
 ### 3.3 Probleme identificate
 
-* [exemplu] Feature X are 8% valori lipsă
-* [exemplu] Distribuția feature Y este puternic neuniformă
-* [exemplu] Variabilitate ridicată în clase (class imbalance)
+* Dezechilibru între clase (class imbalance):
 
----
+Acnee = 53 imagini
+
+Eczemă = 63 imagini
+
+Roșeață = 25 imagini (semnificativ mai puține)
+➤ Corectat prin generarea a 2 augmentări per imagine.
+
+* Iluminare și contrast neuniform între surse
+➤ soluție: augmentare cu modificări lumină/contrast + noise mic + blur controlat.
+
+* Rezoluții inițiale diferite
+➤ soluție: resize standard 200px și conversie uniformă RGB.
 
 ##  4. Preprocesarea Datelor
 
 ### 4.1 Curățarea datelor
-
+Întrucât datasetul conține imagini, nu tabele numerice, etapa de curățare s-a realizat vizual și structural, nu prin imputare numerică.
 * **Eliminare duplicatelor**
+ → au fost eliminate imagini foarte asemănătoare sau duplicate descărcate din aceeași sursă
 * **Tratarea valorilor lipsă:**
-  * Feature A: imputare cu mediană
-  * Feature B: eliminare (30% valori lipsă)
-* **Tratarea outlierilor:** IQR / limitare percentile
+  → nu există imagini corupte sau incomplete; 0% lipsă
+(nu este necesară imputare statistică în cazul imaginilor)
+* **Tratarea outlierilor:** s
+→ imagini neclare / incomplet cadrate / necentrate au fost eliminate manual
+→ rezoluțiile diferite au fost uniformizate ulterior prin resize
 
 ### 4.2 Transformarea caracteristicilor
 
-* **Normalizare:** Min–Max / Standardizare
+* **Normalizare:** implicită prin transformare RGB 0–255 → transmisibil ulterior ca 0–1 pentru model
 * **Encoding pentru variabile categoriale**
-* **Ajustarea dezechilibrului de clasă** (dacă este cazul)
+* **Ajustarea dezechilibrului de clasă** 
+→ clasa roșeață având mai puține imagini, datasetul a fost extins prin 2 augmentări per imagine
 
 ### 4.3 Structurarea seturilor de date
 
@@ -135,10 +159,10 @@ project-name/
 
 ##  6. Stare Etapă (de completat de student)
 
-- [ ] Structură repository configurată
-- [ ] Dataset analizat (EDA realizată)
-- [ ] Date preprocesate
+- [x] Structură repository configurată
+- [x] Dataset analizat (EDA realizată)
+- [x] Date preprocesate
 - [ ] Seturi train/val/test generate
-- [ ] Documentație actualizată în README + `data/README.md`
+- [x] Documentație actualizată în README + `data/README.md`
 
 ---

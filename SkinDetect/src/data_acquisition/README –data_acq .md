@@ -1,37 +1,68 @@
-# Modul 1 – Data Logging / Acquisition (scurt)
+# Modul Data Logging / Acquisition – manifest.csv
 
-Acest modul are rolul de a documenta și structura datasetul utilizat în aplicația SIA. Scriptul generate_dataset_csv.py scanează folderele cu imagini originale (data/processed/) și augmentate (data/generated/) și generează fișierul data/dataset_log.csv, care conține metadate despre fiecare imagine: clasă, tipul sursei (original/augmented), dimensiuni și calea completă a fișierului.
+Acest modul are rolul de a documenta setul de date utilizat în proiect prin generarea unui fișier
+`manifest.csv`, care conține metadate despre fiecare imagine procesată.
 
-## Metodă de generare / achiziție
+Fișierul CSV nu este folosit direct de rețeaua neuronală, ci reprezintă un **jurnal al datasetului**,
+necesar pentru trasabilitate, audit al datelor și respectarea cerințelor de la Etapa 4.
 
-Se parcurg automat toate imaginile din processed/ și generated/.
+---
 
-Clasa imaginii este dedusă din numele folderului (acnee / eczema / roseata).
+## Ce este `manifest.csv`
 
-Se extrag și salvează dimensiunile imaginii (width, height).
+`manifest.csv` este un fișier tabelar care conține un rând pentru fiecare imagine din
+`data/processed/`.
 
-Toate informațiile sunt centralizate într-un CSV pentru utilizare ulterioară în pipeline.
+Structura tipică:
 
-## Parametrii utilizați
+| Coloana     | Descriere |
+|-------------|-----------|
+| `image_path`| Calea relativă către fișierul imaginii |
+| `label`     | Eticheta clasei (ex: acnee, eczeme) |
+| *(opțional)* `width`, `height` | Dimensiunile imaginii (dacă Pillow este instalat) |
+| *(opțional)* `created_at` | Data și ora generării înregistrării |
 
-Pentru imaginile originale (processed/):
+---
 
-Redimensionare: 200px lățime, menținând proporțiile
+## Ce face scriptul `generate_manifest.py`
 
-Conversie: RGB
+Scriptul:
 
-Eliminare imagini neclare / nerelevante
+- scanează automat folderele `data/processed/acnee` și `data/processed/eczeme`;
+- extrage eticheta clasei din numele folderului părinte;
+- construiește o intrare CSV pentru fiecare imagine găsită;
+- salvează rezultatul în fișierul `data/manifest.csv`.
 
-Pentru imaginile augmentate (generated/):
+---
 
-Ajustări luminozitate
+## De ce este necesar acest fișier
 
-Ajustări contrast
+`manifest.csv` servește ca:
 
-Modificări saturație
+- dovadă a existenței și structurii datasetului;
+- suport pentru analiza distribuției pe clase;
+- document de audit pentru respectarea regulii de minimum 40% date originale.
 
-Gaussian noise (zgomot controlat)
+Acest fișier nu influențează direct performanța modelului, ci are rol strict de **documentare și trasabilitate a datelor**.
 
-Blur redus
+---
+## Metoda de generare / achiziție a datelor
 
-Acești parametri simulează variabilitatea reală a fotografiilor dermatologice și contribuie la diversificarea datasetului (+200% imagini suplimentare).
+Imaginile utilizate în proiect au fost colectate manual din surse publice online (baze de date deschise și site-uri educaționale dermatologice). Fiecare imagine a fost inspectată vizual și etichetată manual într-una dintre cele două clase finale: **acnee** și **eczeme**.
+
+În procesul de colectare au fost eliminate imagini:
+- neclare sau foarte blurate;
+- duplicate sau aproape duplicate;
+- colaje sau imagini cu watermark mare;
+- imagini care nu conțin o zonă clară de piele.
+
+Această etapă de selecție și etichetare manuală reprezintă contribuția originală principală asupra setului de date și asigură relevanța și calitatea observațiilor utilizate ulterior în modelul RN.
+
+---
+
+## Cum se generează
+
+Din rădăcina proiectului:
+
+```bash
+python src/data_acquisition/generate_manifest.py
