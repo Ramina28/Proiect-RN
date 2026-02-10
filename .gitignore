@@ -1,0 +1,46 @@
+# ======================
+# Python cache
+# ======================
+__pycache__/
+*.pyc
+
+# ======================
+# Virtual environment (dacă există local)
+# ======================
+venv/
+.env/
+
+# ======================
+# Jupyter
+# ======================
+.ipynb_checkpoints/
+
+# ======================
+# Sistem
+# ======================
+.DS_Store
+Thumbs.db
+
+# ======================
+# Logs
+# ======================
+*.log
+
+# ======================
+# Build / packaging (nu sunt necesare în proiect)
+# ======================
+build/
+dist/
+*.egg-info/
+
+# ======================
+# TensorFlow temporare (checkpoint-uri de antrenare)
+# Modelul final .h5 rămâne în repo
+# ======================
+checkpoint
+*.ckpt
+
+# ======================
+# VS Code (setări locale)
+# ======================
+.vscode/
