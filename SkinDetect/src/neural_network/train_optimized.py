@@ -53,7 +53,7 @@ OPTIMIZED_MODEL_OUT = os.path.join(MODELS_DIR, "optimized_model.h5")
 # Parametri
 BATCH_SIZE = 16
 EPOCHS = 30
-IMG_SIZE = (224, 224)
+IMG_SIZE = (200, 200)
 
 def plot_learning_curves(history, out_path):
     try:

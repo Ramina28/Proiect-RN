@@ -1,8 +1,8 @@
-tensorflow>=2.10
-gradio>=4.0
-numpy
-pillow
-scikit-learn
-matplotlib
-pandas
-seaborn
+tensorflow>=2.10      # Antrenarea și rularea modelului CNN (Keras inclus)
+gradio>=4.0           # Interfață web pentru testarea modelului (UI)
+numpy                 # Operații numerice și manipulare array-uri
+pillow                # Încărcarea și preprocesarea imaginilor
+scikit-learn          # Calcul metrici: accuracy, precision, recall, F1, confusion matrix
+matplotlib            # Generarea graficelor (learning curves, comparații, metrici)
+pandas                # Citirea și procesarea fișierelor CSV (optimization_history)
+seaborn               # Vizualizări statistice avansate (ex. heatmap pentru confusion matrix)

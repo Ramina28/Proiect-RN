@@ -1,0 +1,79 @@
+{
+    "model_name": "optimized_model.h5",
+    "test_dir": "C:\\Users\\gaita\\Desktop\\Proiect-RN\\Proiect-RN\\SkinDetect\\data\\test",
+    "num_samples": 1228,
+    "num_errors": 151,
+    "top_k": 5,
+    "top_errors": [
+        {
+            "index": 280,
+            "file_path": "C:\\Users\\gaita\\Desktop\\Proiect-RN\\Proiect-RN\\SkinDetect\\data\\test\\acnee\\hidradenitis-suppurativa-73_1739.png",
+            "file_name": "hidradenitis-suppurativa-73_1739.png",
+            "true_idx": 0,
+            "true_label": "acnee",
+            "pred_idx": 1,
+            "pred_label": "eczeme",
+            "confidence": 0.9867476224899292,
+            "probs": {
+                "acnee": 0.01325236912816763,
+                "eczeme": 0.9867476224899292
+            }
+        },
+        {
+            "index": 1182,
+            "file_path": "C:\\Users\\gaita\\Desktop\\Proiect-RN\\Proiect-RN\\SkinDetect\\data\\test\\eczeme\\v-05atopicDerm040405ok2_7999.png",
+            "file_name": "v-05atopicDerm040405ok2_7999.png",
+            "true_idx": 1,
+            "true_label": "eczeme",
+            "pred_idx": 0,
+            "pred_label": "acnee",
+            "confidence": 0.9611831903457642,
+            "probs": {
+                "acnee": 0.9611831903457642,
+                "eczeme": 0.03881681710481644
+            }
+        },
+        {
+            "index": 763,
+            "file_path": "C:\\Users\\gaita\\Desktop\\Proiect-RN\\Proiect-RN\\SkinDetect\\data\\test\\eczeme\\6_141_4974.png",
+            "file_name": "6_141_4974.png",
+            "true_idx": 1,
+            "true_label": "eczeme",
+            "pred_idx": 0,
+            "pred_label": "acnee",
+            "confidence": 0.9484245181083679,
+            "probs": {
+                "acnee": 0.9484245181083679,
+                "eczeme": 0.051575466990470886
+            }
+        },
+        {
+            "index": 162,
+            "file_path": "C:\\Users\\gaita\\Desktop\\Proiect-RN\\Proiect-RN\\SkinDetect\\data\\test\\acnee\\acne-cystic-110_1015.png",
+            "file_name": "acne-cystic-110_1015.png",
+            "true_idx": 0,
+            "true_label": "acnee",
+            "pred_idx": 1,
+            "pred_label": "eczeme",
+            "confidence": 0.9382309913635254,
+            "probs": {
+                "acnee": 0.061768945306539536,
+                "eczeme": 0.9382309913635254
+            }
+        },
+        {
+            "index": 169,
+            "file_path": "C:\\Users\\gaita\\Desktop\\Proiect-RN\\Proiect-RN\\SkinDetect\\data\\test\\acnee\\acne-cystic-137_1045.png",
+            "file_name": "acne-cystic-137_1045.png",
+            "true_idx": 0,
+            "true_label": "acnee",
+            "pred_idx": 1,
+            "pred_label": "eczeme",
+            "confidence": 0.9059395790100098,
+            "probs": {
+                "acnee": 0.09406039863824844,
+                "eczeme": 0.9059395790100098
+            }
+        }
+    ]
+}

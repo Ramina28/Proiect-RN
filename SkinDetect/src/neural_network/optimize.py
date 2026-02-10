@@ -1,7 +1,7 @@
 import tensorflow as tf
 from tensorflow.keras import layers, models, optimizers
 
-def build_optimized_model(input_shape=(224, 224, 3), num_classes=2):
+def build_optimized_model(input_shape=(200, 200, 3), num_classes=2):
     """
     Construieste arhitectura optimizata pentru Etapa 6.
     Include strat de Dropout pentru regularizare si input_shape corect.

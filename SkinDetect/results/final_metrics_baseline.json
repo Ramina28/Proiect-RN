@@ -1,0 +1,44 @@
+{
+    "model_name": "best_model.h5",
+    "accuracy": 0.8713355048859935,
+    "f1_score": 0.8713341397164927,
+    "precision": 0.87198942315861,
+    "recall": 0.8718630573248407,
+    "confusion_matrix": [
+        [
+            533,
+            95
+        ],
+        [
+            63,
+            537
+        ]
+    ],
+    "classification_report": {
+        "Acnee": {
+            "precision": 0.8942953020134228,
+            "recall": 0.8487261146496815,
+            "f1-score": 0.8709150326797386,
+            "support": 628.0
+        },
+        "Eczeme": {
+            "precision": 0.8496835443037974,
+            "recall": 0.895,
+            "f1-score": 0.8717532467532467,
+            "support": 600.0
+        },
+        "accuracy": 0.8713355048859935,
+        "macro avg": {
+            "precision": 0.87198942315861,
+            "recall": 0.8718630573248407,
+            "f1-score": 0.8713341397164927,
+            "support": 1228.0
+        },
+        "weighted avg": {
+            "precision": 0.8724980262595342,
+            "recall": 0.8713355048859935,
+            "f1-score": 0.8713245835299869,
+            "support": 1228.0
+        }
+    }
+}
